@@ -16,6 +16,7 @@ class BaseDataset(data.Dataset):
 
         super(BaseDataset, self).__init__()
         pkl_file = os.path.join(ROOT_DATASET_PATH, pkl_filename)
+        #print(pkl_file)
 
         with open(pkl_file, 'rb') as fid:
             pkl = pickle.load(fid, encoding='iso-8859-1')

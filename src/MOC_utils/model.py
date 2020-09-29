@@ -101,18 +101,18 @@ def save_model(path, model, optimizer=None, epoch=0, best=100):
 
 def load_imagenet_pretrained_model(opt, model):
     model_urls = {
-        'resnet18': 'https://download.pytorch.org/models/resnet18-5c106cde.pth',
-        'resnet34': 'https://download.pytorch.org/models/resnet34-333f7ec4.pth',
-        'resnet50': 'https://download.pytorch.org/models/resnet50-19c8e357.pth',
-        'resnet101': 'https://download.pytorch.org/models/resnet101-5d3b4d8f.pth',
-        'resnet152': 'https://download.pytorch.org/models/resnet152-b121ed2d.pth',
-        'dla34': 'http://dl.yf.io/dla/models/imagenet/dla34-ba72cf86.pth'
+        'resnet18': '../experiment/modelzoo/resnet18-5c106cde.pth',
+        'resnet34': '../experiment/modelzoo/resnet34-333f7ec4.pth',
+        'resnet50': '../experiment/modelzoo/resnet50-19c8e357.pth',
+        'resnet101': '../experiment/modelzoo/resnet101-5d3b4d8f.pth',
+        'resnet152': '../experiment/modelzoo/resnet152-b121ed2d.pth',
+        'dla34': '../experiment/modelzoo/dla34-ba72cf86.pth'
     }
     arch = opt.arch
     if arch == 'dla_34':
         print('load imagenet pretrained dla_34')
         model_url = model_urls['dla34']
-        model_weights = model_zoo.load_url(model_url)
+        model_weights = torch.load(model_url)
 
     elif arch.startswith('resnet'):
         num_layers = int(arch[arch.find('_') + 1:]) if '_' in arch else 0
@@ -121,7 +121,7 @@ def load_imagenet_pretrained_model(opt, model):
 
         print('load imagenet pretrained ', arch)
         url = model_urls['resnet{}'.format(num_layers)]
-        model_weights = model_zoo.load_url(url)
+        model_weights = torch.load(url)
         print('=> loading pretrained model {}'.format(url))
 
     else:

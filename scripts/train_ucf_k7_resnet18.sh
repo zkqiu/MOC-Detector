@@ -1,7 +1,7 @@
 cd src
 
 
-python3 train.py --K 7 --exp_id Train_K7_rgb_coco_resnet18 --rgb_model $PATH_TO_SAVE_MODEL --batch_size 128 --master_batch 16 --lr 5e-4 --gpus 0,1,2,3,4,5,6,7 --num_workers 16 --num_epochs 10 --lr_step 5,8 --save_all --arch resnet_18
+python3 train.py --K 7 --exp_id Train_K7_rgb_imagenet_resnet18 --rgb_model ../experiment/result_model --batch_size 32 --master_batch 16 --lr 5e-4 --gpus 0,1 --num_workers 16 --num_epochs 10 --lr_step 5,8 --save_all --arch resnet_18
 
 
 # -------------------- Evaluation --------------------

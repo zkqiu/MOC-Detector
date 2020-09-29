@@ -40,7 +40,7 @@ class opts(object):
                                  help='length of action tube')
 
         # system settings
-        self.parser.add_argument('--gpus', default='0,1,2,3,4,5,6,7',
+        self.parser.add_argument('--gpus', default='0,1,2,3',
                                  help='visible gpu list, use comma for multiple gpus')
         self.parser.add_argument('--num_workers', type=int, default=16,
                                  help='dataloader threads. 0 for single-thread.')
@@ -68,7 +68,7 @@ class opts(object):
                                  help='input image width')
 
         # training settings
-        self.parser.add_argument('--pretrain_model', default='coco',
+        self.parser.add_argument('--pretrain_model', default='imagenet',
                                  help='training pretrain_model, coco | imagenet')
         self.parser.add_argument('--ucf_pretrain', action='store_true',
                                  help='use ucf pretrain for jhmdb')
