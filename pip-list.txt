@@ -1,16 +1,12 @@
 numpy
 
-tensorflow
+tensorflow==1.12
 
 tensorboardX
-
-pickle
 
 progress
 
 h5py
-
-opencv-python
 
 Cython
 
