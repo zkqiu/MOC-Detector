@@ -17,6 +17,7 @@ import numpy as np
 import random
 import tensorboardX
 
+import pdb
 
 GLOBAL_SEED = 317
 
@@ -39,6 +40,9 @@ def main(opt):
     torch.backends.cudnn.benchmark = True
     print()
     print('dataset: ' + opt.dataset + '   task:  ' + opt.task)
+
+    # pdb.set_trace()
+
     Dataset = get_dataset(opt.dataset)
     opt = opts().update_dataset(opt, Dataset)
 

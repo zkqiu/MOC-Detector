@@ -106,7 +106,7 @@ def normal_inference(opt, drop_last=False):
     print('inference chunk_sizes:', opt.chunk_sizes)
     print(len(data_loader))
 
-    pdb.set_trace()
+    # pdb.set_trace()
     
     for iter, data in enumerate(data_loader):
         outfile = data['outfile']
