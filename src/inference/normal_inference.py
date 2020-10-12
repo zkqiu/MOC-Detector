@@ -15,6 +15,9 @@ from detector.normal_moc_det import MOCDetector
 import random
 # MODIFY FOR PYTORCH 1+
 # cv2.setNumThreads(0)
+
+import pdb
+
 GLOBAL_SEED = 317
 
 
@@ -102,6 +105,9 @@ def normal_inference(opt, drop_last=False):
 
     print('inference chunk_sizes:', opt.chunk_sizes)
     print(len(data_loader))
+
+    pdb.set_trace()
+    
     for iter, data in enumerate(data_loader):
         outfile = data['outfile']
 
