@@ -68,7 +68,7 @@ class opts(object):
                                  help='input image width')
 
         # training settings
-        self.parser.add_argument('--pretrain_model', default='imagenet',
+        self.parser.add_argument('--pretrain_model', default='coco',
                                  help='training pretrain_model, coco | imagenet')
         self.parser.add_argument('--ucf_pretrain', action='store_true',
                                  help='use ucf pretrain for jhmdb')

@@ -4,10 +4,10 @@ from __future__ import print_function
 
 from torch import nn
 from .branch import MOC_Branch
-# from .dla import MOC_DLA
+from .dla import MOC_DLA
 from .resnet import MOC_ResNet
 backbone = {
-    # 'dla': MOC_DLA,
+    'dla': MOC_DLA,
     'resnet': MOC_ResNet
 }
 

@@ -8,8 +8,6 @@ progress
 
 h5py
 
-opencv-python
-
 Cython
 
 matplotlib
