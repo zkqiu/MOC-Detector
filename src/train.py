@@ -55,7 +55,7 @@ def main(opt):
 
     opt.device = torch.device('cuda')
 
-    model = create_model(opt.arch, opt.branch_info, opt.head_conv, opt.K)
+    model = create_model(opt.arch, opt.branch_info, opt.head_conv, opt.K, opt.rec_arch, opt.modality)
     optimizer = torch.optim.Adam(model.parameters(), opt.lr)
     start_epoch = opt.start_epoch
 

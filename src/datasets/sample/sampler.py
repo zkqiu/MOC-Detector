@@ -10,6 +10,7 @@ from MOC_utils.gaussian_hm import gaussian_radius, draw_umich_gaussian
 from ACT_utils.ACT_aug import apply_distort, apply_expand, crop_image
 ## MODIFY FOR PYTORCH 1+
 #cv2.setNumThreads(0)
+import torch
 
 class Sampler(data.Dataset):
     def __getitem__(self, id):
@@ -18,6 +19,8 @@ class Sampler(data.Dataset):
         num_classes = self.num_classes
         input_h = self._resize_height
         input_w = self._resize_width
+        rec_input_h = self._rec_resize_height
+        rec_input_w = self._rec_resize_width
         output_h = input_h // self.opt.down_ratio
         output_w = input_w // self.opt.down_ratio
         # read images
@@ -26,6 +29,7 @@ class Sampler(data.Dataset):
         else:
             images = [cv2.imread(self.imagefile(v, frame + i)).astype(np.float32) for i in range(K)]
         data = [np.empty((3 * self._ninput, self._resize_height, self._resize_width), dtype=np.float32) for i in range(K)]
+        rec_data = [np.empty((3 * self._ninput, self._rec_resize_height, self._rec_resize_width), dtype=np.float32) for i in range(K)]
 
         if self.mode == 'train':
             do_mirror = random.getrandbits(1) == 1
@@ -84,15 +88,20 @@ class Sampler(data.Dataset):
                 gt_bbox[ilabel][itube][:, 1] = gt_bbox[ilabel][itube][:, 1] / original_h * output_h
                 gt_bbox[ilabel][itube][:, 2] = gt_bbox[ilabel][itube][:, 2] / original_w * output_w
                 gt_bbox[ilabel][itube][:, 3] = gt_bbox[ilabel][itube][:, 3] / original_h * output_h
-        images = [cv2.resize(im, (input_w, input_h), interpolation=cv2.INTER_LINEAR) for im in images]
+        det_images = [cv2.resize(im, (input_w, input_h), interpolation=cv2.INTER_LINEAR) for im in images]
+        rec_images = [cv2.resize(im, (rec_input_w, rec_input_h), interpolation=cv2.INTER_LINEAR) for im in images]
         # transpose image channel and normalize
         mean = np.tile(np.array(self.opt.mean, dtype=np.float32)[:, None, None], (self._ninput, 1, 1))
         std = np.tile(np.array(self.opt.std, dtype=np.float32)[:, None, None], (self._ninput, 1, 1))
         for i in range(K):
             for ii in range(self._ninput):
-                data[i][3 * ii:3 * ii + 3, :, :] = np.transpose(images[i + ii], (2, 0, 1))
+                data[i][3 * ii:3 * ii + 3, :, :] = np.transpose(det_images[i + ii], (2, 0, 1))
+                rec_data[i][3 * ii:3 * ii + 3, :, :] = np.transpose(rec_images[i + ii], (2, 0, 1))
 
             data[i] = ((data[i] / 255.) - mean) / std
+            rec_data[i] = ((rec_data[i] / 255.) - mean) / std
+        
+        data_concat = torch.from_numpy(np.concatenate(rec_data, axis=0))
 
         # draw ground truth
         hm = np.zeros((num_classes, output_h, output_w), dtype=np.float32)
@@ -135,6 +144,6 @@ class Sampler(data.Dataset):
                 # mask indicate how many objects in this tube
                 mask[num_objs] = 1
                 num_objs = num_objs + 1
-        result = {'input': data, 'hm': hm, 'mov': mov, 'wh': wh, 'mask': mask, 'index': index, 'index_all': index_all}
+        result = {'input': data, 'rec': data_concat, 'hm': hm, 'mov': mov, 'wh': wh, 'mask': mask, 'index': index, 'index_all': index_all}
 
         return result

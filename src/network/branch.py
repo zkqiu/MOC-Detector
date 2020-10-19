@@ -47,14 +47,16 @@ class MOC_Branch(nn.Module):
                       padding=0, bias=True))
         fill_fc_weights(self.wh)
 
-    def forward(self, input_chunk):
+    def forward(self, input_chunk, attention):
         output = {}
         output_wh = []
         for feature in input_chunk:
             output_wh.append(self.wh(feature))
         input_chunk = torch.cat(input_chunk, dim=1)
         output_wh = torch.cat(output_wh, dim=1)
-        output['hm'] = self.hm(input_chunk)
+        hm = self.hm(input_chunk)
+        # print(hm.shape, attention.shape)
+        output['hm'] = hm * attention
         output['mov'] = self.mov(input_chunk)
         output['wh'] = output_wh
         return output

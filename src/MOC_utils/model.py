@@ -11,10 +11,10 @@ from network.moc_net import MOC_Net
 from network.moc_det import MOC_Det, MOC_Backbone
 
 
-def create_model(arch, branch_info, head_conv, K, flip_test=False):
+def create_model(arch, branch_info, head_conv, K, rec, modality, flip_test=False):
     num_layers = int(arch[arch.find('_') + 1:]) if '_' in arch else 0
     arch = arch[:arch.find('_')] if '_' in arch else arch
-    model = MOC_Net(arch, num_layers, branch_info, head_conv, K, flip_test=flip_test)
+    model = MOC_Net(arch, num_layers, branch_info, head_conv, K, rec, modality, flip_test=flip_test)
     return model
 
 

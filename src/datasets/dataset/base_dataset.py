@@ -36,6 +36,8 @@ class BaseDataset(data.Dataset):
         self._ninput = opt.ninput
         self._resize_height = opt.resize_height
         self._resize_width = opt.resize_width
+        self._rec_resize_height = opt.rec_resize_height
+        self._rec_resize_width = opt.rec_resize_width
 
         assert len(self._train_videos[self.split - 1]) + len(self._test_videos[self.split - 1]) == len(self._nframes)
         self._indices = []

@@ -22,6 +22,8 @@ class opts(object):
                                  help='path to rgb model')
         self.parser.add_argument('--flow_model', default='',
                                  help='path to flow model')
+        self.parser.add_argument('--modality', default='rgb',
+                                 help='modality')
         self.parser.add_argument('--seed', type=int, default=317,
                                  help='random seed')
         self.parser.add_argument('--ninput', type=int, default=1,
@@ -31,6 +33,8 @@ class opts(object):
         self.parser.add_argument('--arch', default='dla_34',
                                  help='model architecture. Currently tested'
                                       'resnet_18 | resnet_101 | dla_34')
+        self.parser.add_argument('--rec_arch', 
+                                 help='action recognition architecture')
         self.parser.add_argument('--set_head_conv', type=int, default=-1,
                                  help='conv layer channels for output head'
                                       'default setting is 256 for dla and 256 for resnet(except for wh branch) ')
@@ -65,6 +69,10 @@ class opts(object):
         self.parser.add_argument('--resize_height', type=int, default=288,
                                  help='input image height')
         self.parser.add_argument('--resize_width', type=int, default=288,
+                                 help='input image width')
+        self.parser.add_argument('--rec_resize_height', type=int, default=224,
+                                 help='input image height')
+        self.parser.add_argument('--rec_resize_width', type=int, default=224,
                                  help='input image width')
 
         # training settings
