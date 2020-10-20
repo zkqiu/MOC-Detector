@@ -69,10 +69,11 @@ class RegL1Loss(torch.nn.Module):
 
     def forward(self, output, mask, index, target, index_all=None):
         pred = _tranpose_and_gather_feature(output, index, index_all=index_all)
-        # pred --> b, N, 2*K
-        # mask --> b, N ---> b, N, 2*K
+        # pred --> b, N, 2
+        # mask --> b, N ---> b, N, 2
         mask = mask.unsqueeze(2).expand_as(pred).float()
-        # print(pred.shape)
+        target = target[:,:,6:8]
+
         # loss = F.l1_loss(pred * mask, target * mask, reduction='elementwise_mean')
         loss = F.l1_loss(pred * mask, target * mask, size_average=False)
         loss = loss / (mask.sum() + 1e-4)

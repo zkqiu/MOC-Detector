@@ -30,7 +30,7 @@ class AverageMeter(object):
 
 
 def _gather_feature(feature, index, index_all=None):
-    # dim = channel = 2*K
+    # dim = channel = 2
     # feature b, h*w , c
     # index  b, N --> b, N, c
     if index_all is not None:
@@ -39,7 +39,7 @@ def _gather_feature(feature, index, index_all=None):
         dim = feature.size(2)
         index0 = index.unsqueeze(2).expand(index.size(0), index.size(1), dim)
     feature = feature.gather(1, index0)
-    # feature --> b, N, 2*K
+    # feature --> b, N, 2
     return feature
 
 

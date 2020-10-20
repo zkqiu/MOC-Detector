@@ -97,7 +97,6 @@ class Sampler(data.Dataset):
         # draw ground truth
         hm = np.zeros((num_classes, output_h, output_w), dtype=np.float32)
         wh = np.zeros((self.max_objs, K * 2), dtype=np.float32)
-        mov = np.zeros((self.max_objs, K * 2), dtype=np.float32)
         index = np.zeros((self.max_objs), dtype=np.int64)
         index_all = np.zeros((self.max_objs, K * 2), dtype=np.int64)
         mask = np.zeros((self.max_objs), dtype=np.uint8)
@@ -125,9 +124,6 @@ class Sampler(data.Dataset):
                     center_all_int = center_all.astype(np.int32)
                     # wh is ground truth bbox's height and width in i_th frame
                     wh[num_objs, i * 2: i * 2 + 2] = 1. * (gt_bbox[ilabel][itube][i, 2] - gt_bbox[ilabel][itube][i, 0]), 1. * (gt_bbox[ilabel][itube][i, 3] - gt_bbox[ilabel][itube][i, 1])
-                    # mov is ground truth movement from i_th frame to key frame
-                    mov[num_objs, i * 2: i * 2 + 2] = (gt_bbox[ilabel][itube][i, 0] + gt_bbox[ilabel][itube][i, 2]) / 2 - \
-                        center_int[0],  (gt_bbox[ilabel][itube][i, 1] + gt_bbox[ilabel][itube][i, 3]) / 2 - center_int[1]
                     # index_all are all frame's bbox center position
                     index_all[num_objs, i * 2: i * 2 + 2] = center_all_int[1] * output_w + center_all_int[0], center_all_int[1] * output_w + center_all_int[0]
                 # index is key frame's boox center position
@@ -135,6 +131,6 @@ class Sampler(data.Dataset):
                 # mask indicate how many objects in this tube
                 mask[num_objs] = 1
                 num_objs = num_objs + 1
-        result = {'input': data, 'hm': hm, 'mov': mov, 'wh': wh, 'mask': mask, 'index': index, 'index_all': index_all}
+        result = {'input': data, 'hm': hm, 'wh': wh, 'mask': mask, 'index': index, 'index_all': index_all}
 
         return result
