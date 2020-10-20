@@ -20,8 +20,15 @@ class MOC_Branch(nn.Module):
         assert head_conv > 0
         wh_head_conv = 64 if arch == 'resnet' else head_conv
 
+        self.action = nn.Sequential(
+            nn.Conv3d(input_channel, 256, kernel_size=3, stride=1, padding=1, bias=True),
+            nn.ReLU(inplace=True),
+            nn.Conv3d(256, 64, kernel_size=3, stride=1, padding=1, bias=True),
+            nn.ReLU(inplace=True)
+        )
+
         self.hm = nn.Sequential(
-            nn.Conv2d(K * input_channel, head_conv,
+            nn.Conv2d(K * input_channel * 2, head_conv,
                       kernel_size=3, padding=1, bias=True),
             nn.ReLU(inplace=True),
             nn.Conv2d(head_conv, branch_info['hm'],
@@ -52,9 +59,14 @@ class MOC_Branch(nn.Module):
         output_wh = []
         for feature in input_chunk:
             output_wh.append(self.wh(feature))
+        input_action = torch.stack(input_chunk, dim=2)
         input_chunk = torch.cat(input_chunk, dim=1)
         output_wh = torch.cat(output_wh, dim=1)
-        output['hm'] = self.hm(input_chunk)
+        output_ac = self.action(input_action)
+        b,_,_,h,w = output_ac.shape
+        output_ac = output_ac.view(b, -1, h, w)
+        hm_input_chunk = torch.cat([input_chunk, output_ac], dim=1)
+        output['hm'] = self.hm(hm_input_chunk)
         output['mov'] = self.mov(input_chunk)
         output['wh'] = output_wh
         return output

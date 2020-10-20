@@ -1,9 +1,9 @@
 cd src
 
-PATH_TO_SAVE_MODEL=../experiment/result_model/K7_rgb_imagenet_resnet18
+PATH_TO_SAVE_MODEL=../experiment/result_model/K7_rgb_imagenet_resnet18_3dconv
 
 GPU=0,1,2,3
-CUDA_VISIBLE_DEVICES=$GPU python3 train.py --K 7 --exp_id Train_K7_rgb_imagenet_resnet18 --rgb_model $PATH_TO_SAVE_MODEL --batch_size 62 --master_batch 14 --lr 5e-4 --gpus $GPU --num_workers 16 --num_epochs 10 --lr_step 5,8 --save_all --arch resnet_18 --pretrain_model imagenet
+CUDA_VISIBLE_DEVICES=$GPU python3 train.py --K 7 --exp_id Train_K7_rgb_imagenet_resnet18_3dconv --rgb_model $PATH_TO_SAVE_MODEL --batch_size 70 --master_batch 16 --lr 5e-4 --gpus $GPU --num_workers 16 --num_epochs 10 --lr_step 5,8 --save_all --arch resnet_18 --pretrain_model imagenet
 
 
 # -------------------- Evaluation --------------------
