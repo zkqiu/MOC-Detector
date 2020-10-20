@@ -215,15 +215,15 @@ TSN Configurations:
                     raise ValueError("New atomic module type: {}. Need to give it a learning policy".format(type(m)))
 
         return [
-            {'params': first_conv_weight, 'lr_mult': 5 if self.modality == 'Flow' else 1, 'decay_mult': 1,
+            {'params': first_conv_weight, 'lr_mult': 500 if self.modality == 'Flow' else 100, 'decay_mult': 1,
              'name': "first_conv_weight"},
-            {'params': first_conv_bias, 'lr_mult': 10 if self.modality == 'Flow' else 2, 'decay_mult': 0,
+            {'params': first_conv_bias, 'lr_mult': 100 if self.modality == 'Flow' else 200, 'decay_mult': 0,
              'name': "first_conv_bias"},
-            {'params': normal_weight, 'lr_mult': 1, 'decay_mult': 1,
+            {'params': normal_weight, 'lr_mult': 100, 'decay_mult': 1,
              'name': "normal_weight"},
-            {'params': normal_bias, 'lr_mult': 2, 'decay_mult': 0,
+            {'params': normal_bias, 'lr_mult': 200, 'decay_mult': 0,
              'name': "normal_bias"},
-            {'params': bn, 'lr_mult': 1, 'decay_mult': 0,
+            {'params': bn, 'lr_mult': 100, 'decay_mult': 0,
              'name': "BN scale/shift"},
         ]
 
