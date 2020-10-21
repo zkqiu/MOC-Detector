@@ -49,7 +49,7 @@ class PrefetchDataset(torch.utils.data.Dataset):
         self.output_w = self.input_w // self.opt.down_ratio
         self.indices = []
         for v in self.vlist:
-            for i in range(1, 1 + self.nframes[v] - self.opt.K + 1):
+            for i in range(1, 1 + self.nframes[v]):
                 if not os.path.exists(self.outfile(v, i)):
                     self.indices += [(v, i)]
 
@@ -60,7 +60,7 @@ class PrefetchDataset(torch.utils.data.Dataset):
         flows = []
 
         if self.opt.rgb_model != '':
-            images = [cv2.imread(self.imagefile(v, frame + i)).astype(np.float32) for i in range(self.opt.K)]
+            images = [cv2.imread(self.imagefile(v, max(1, min(frame + i - self.opt.K//2, self.nframes[v])))).astype(np.float32) for i in range(self.opt.K)]
             images = self.pre_process_func(images)
 
         if self.opt.flow_model != '':

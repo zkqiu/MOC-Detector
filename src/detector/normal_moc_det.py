@@ -80,7 +80,7 @@ class MOCDetector(object):
                 rgb_output = self.rgb_model(images)
                 rgb_hm = rgb_output[0]['hm'].sigmoid_()
                 rgb_wh = rgb_output[0]['wh']
-                rgb_mov = rgb_output[0]['mov']
+                # rgb_mov = rgb_output[0]['mov']
                 if self.opt.flip_test:
                     rgb_hm_f = rgb_output[1]['hm'].sigmoid_()
                     rgb_wh_f = rgb_output[1]['wh']
@@ -92,7 +92,7 @@ class MOCDetector(object):
                 flow_output = self.flow_model(flows)
                 flow_hm = flow_output[0]['hm'].sigmoid_()
                 flow_wh = flow_output[0]['wh']
-                flow_mov = flow_output[0]['mov']
+                # flow_mov = flow_output[0]['mov']
                 if self.opt.flip_test:
                     flow_hm_f = flow_output[1]['hm'].sigmoid_()
                     flow_wh_f = flow_output[1]['wh']
@@ -103,23 +103,23 @@ class MOCDetector(object):
             if self.flow_model is not None and self.rgb_model is not None:
                 hm = (1 - self.opt.hm_fusion_rgb) * flow_hm + self.opt.hm_fusion_rgb * rgb_hm
                 wh = (1 - self.opt.wh_fusion_rgb) * flow_wh + self.opt.wh_fusion_rgb * rgb_wh
-                mov = (1 - self.opt.mov_fusion_rgb) * flow_mov + self.opt.mov_fusion_rgb * rgb_mov
+                # mov = (1 - self.opt.mov_fusion_rgb) * flow_mov + self.opt.mov_fusion_rgb * rgb_mov
             elif self.flow_model is not None and self.rgb_model is None:
                 hm = flow_hm
                 wh = flow_wh
-                mov = flow_mov
+                # mov = flow_mov
             elif self.rgb_model is not None and self.flow_model is None:
                 hm = rgb_hm
                 wh = rgb_wh
-                mov = rgb_mov
+                # mov = rgb_mov
             else:
                 print('No model exists.')
                 assert 0
 
-            detections = moc_decode(hm, wh, mov, N=self.opt.N, K=self.opt.K)
+            detections = moc_decode(hm, wh, N=self.opt.N, K=self.opt.K)
             return detections
 
-    def post_process(self, detections, height, width, output_height, output_width, num_classes, K):
+    def post_process(self, detections, height, width, output_height, output_width, num_classes):
         detections = detections.detach().cpu().numpy()
 
         results = []
@@ -133,7 +133,7 @@ class MOCDetector(object):
             # gather bbox for each class
             for c in range(self.opt.num_classes):
                 inds = (classes == c)
-                top_preds[c + 1] = detections[i, inds, :4 * K + 1].astype(np.float32)
+                top_preds[c + 1] = detections[i, inds, :4 + 1].astype(np.float32)
             results.append(top_preds)
         return results
 
@@ -158,6 +158,6 @@ class MOCDetector(object):
 
         detections = self.post_process(detections, meta['height'], meta['width'],
                                        meta['output_height'], meta['output_width'],
-                                       self.opt.num_classes, self.opt.K)
+                                       self.opt.num_classes)
 
         return detections

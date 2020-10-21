@@ -49,7 +49,7 @@ def _tranpose_and_gather_feature(feature, index, index_all=None):
     # b,h,w,c --> b,h*w,c
     feature = feature.view(feature.size(0), -1, feature.size(3))
     feature = _gather_feature(feature, index, index_all=index_all)
-    # feature --> b, N, 2*K
+    # feature --> b, N, 2
     return feature
 
 

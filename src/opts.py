@@ -161,6 +161,5 @@ class opts(object):
     def update_dataset(self, opt, dataset):
         opt.num_classes = dataset.num_classes
         opt.branch_info = {'hm': opt.num_classes,
-                           'mov': 2 * opt.K,
-                           'wh': 2 * opt.K}
+                           'wh': 2}
         return opt

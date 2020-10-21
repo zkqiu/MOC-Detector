@@ -30,8 +30,7 @@ class MOCTrainLoss(torch.nn.Module):
         #                          batch['index'], batch['mov'])
 
         wh_loss = self.crit_wh(output['wh'], batch['mask'],
-                               batch['index'], batch['wh'],
-                               index_all=None)
+                               batch['index'], batch['wh'])
 
         loss = opt.hm_weight * hm_loss + opt.wh_weight * wh_loss
         # MODIFY for pytorch 0.4.0

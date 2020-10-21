@@ -34,7 +34,7 @@ class MOC_Branch(nn.Module):
             nn.Conv2d(input_channel, wh_head_conv,
                       kernel_size=3, padding=1, bias=True),
             nn.ReLU(inplace=True),
-            nn.Conv2d(wh_head_conv, branch_info['wh'] // K,
+            nn.Conv2d(wh_head_conv, branch_info['wh'],
                       kernel_size=1, stride=1,
                       padding=0, bias=True))
         fill_fc_weights(self.wh)

@@ -38,49 +38,47 @@ def _topN(scores, N=40):
     return topk_score, topk_index, topk_classes, topk_ys, topk_xs
 
 
-def moc_decode(heat, wh, mov, N=100, K=5):
+def moc_decode(heat, wh, N=100, K=5):
     batch, cat, height, width = heat.size()
 
     # perform 'nms' on heatmaps
     heat = _nms(heat)
     scores, index, classes, ys, xs = _topN(heat, N=N)
 
-    mov = _tranpose_and_gather_feature(mov, index)
-    mov = mov.view(batch, N, 2 * K)
+    # mov = _tranpose_and_gather_feature(mov, index)
+    # mov = mov.view(batch, N, 2 * K)
 
-    mov_copy = mov.clone()
-    mov_copy = mov_copy.view(batch, N, K, 2)
-    index_all = torch.zeros((batch, N, K, 2)).cuda()
-    xs_all = xs.clone().unsqueeze(2).expand(batch, N, K)
-    ys_all = ys.clone().unsqueeze(2).expand(batch, N, K)
-    xs_all = xs_all + mov_copy[:, :, :, 0]
-    ys_all = ys_all + mov_copy[:, :, :, 1]
-    xs_all[:, :, K // 2] = xs
-    ys_all[:, :, K // 2] = ys
+    # mov_copy = mov.clone()
+    # mov_copy = mov_copy.view(batch, N, K, 2)
+    # index_all = torch.zeros((batch, N, K, 2)).cuda()
+    # xs_all = xs.clone().unsqueeze(2).expand(batch, N, K)
+    # ys_all = ys.clone().unsqueeze(2).expand(batch, N, K)
+    # xs_all = xs_all + mov_copy[:, :, :, 0]
+    # ys_all = ys_all + mov_copy[:, :, :, 1]
+    # xs_all[:, :, K // 2] = xs
+    # ys_all[:, :, K // 2] = ys
 
-    xs_all = xs_all.long()
-    ys_all = ys_all.long()
+    # xs_all = xs_all.long()
+    # ys_all = ys_all.long()
 
-    index_all[:, :, :, 0] = xs_all + ys_all * width
-    index_all[:, :, :, 1] = xs_all + ys_all * width
-    index_all[index_all < 0] = 0
-    index_all[index_all > width * height - 1] = width * height - 1
-    index_all = index_all.view(batch, N, K * 2).long()
+    # index_all[:, :, :, 0] = xs_all + ys_all * width
+    # index_all[:, :, :, 1] = xs_all + ys_all * width
+    # index_all[index_all < 0] = 0
+    # index_all[index_all > width * height - 1] = width * height - 1
+    # index_all = index_all.view(batch, N, K * 2).long()
 
     # gather wh in each location after movement
-    wh = _tranpose_and_gather_feature(wh, index, index_all=index_all)
-    wh = wh.view(batch, N, 2 * K)
+    # wh.shape : [b, N, 2]
+    wh = _tranpose_and_gather_feature(wh, index)
+    # wh = wh.view(batch, N, 2 * K)
 
     classes = classes.view(batch, N, 1).float()
     scores = scores.view(batch, N, 1)
     xs = xs.view(batch, N, 1)
     ys = ys.view(batch, N, 1)
     bboxes = []
-    for i in range(K):
-        bboxes.extend([xs + mov[..., 2 * i:2 * i + 1] - wh[..., 2 * i:2 * i + 1] / 2,
-                       ys + mov[..., 2 * i + 1:2 * i + 2] - wh[..., 2 * i + 1:2 * i + 2] / 2,
-                       xs + mov[..., 2 * i:2 * i + 1] + wh[..., 2 * i:2 * i + 1] / 2,
-                       ys + mov[..., 2 * i + 1:2 * i + 2] + wh[..., 2 * i + 1:2 * i + 2] / 2])
+    bboxes.extend([xs - wh[..., 0:1] / 2, ys - wh[..., 1:2] / 2,
+                    xs + wh[..., 0:1] / 2, ys + wh[..., 1:2] / 2])
     bboxes = torch.cat(bboxes, dim=2)
     detections = torch.cat([bboxes, scores, classes], dim=2)
 

@@ -72,7 +72,7 @@ class RegL1Loss(torch.nn.Module):
         # pred --> b, N, 2
         # mask --> b, N ---> b, N, 2
         mask = mask.unsqueeze(2).expand_as(pred).float()
-        target = target[:,:,6:8]
+        # target = target[:,:,6:8]
 
         # loss = F.l1_loss(pred * mask, target * mask, reduction='elementwise_mean')
         loss = F.l1_loss(pred * mask, target * mask, size_average=False)
