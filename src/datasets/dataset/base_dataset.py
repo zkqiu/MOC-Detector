@@ -7,7 +7,7 @@ import pickle
 
 import torch.utils.data as data
 
-from ACT_utils.ACT_utils import tubelet_in_out_tubes, tubelet_has_gt
+from ACT_utils.ACT_utils import tubelet_in_out_tubes, tubelet_has_gt, frame_has_gt
 
 import pdb
 
@@ -55,8 +55,8 @@ class BaseDataset(data.Dataset):
         #                                          or (each video has many frames with one classes)
         for v in video_list:
             vtubes = sum(self._gttubes[v].values(), [])
-            self._indices += [(v, i) for i in range(1, self._nframes[v] + 2 - self.K)
-                              if tubelet_in_out_tubes(vtubes, i, self.K) and tubelet_has_gt(vtubes, i, self.K)]
+            self._indices += [(v, i) for i in range(1, self._nframes[v] + 1)
+                              if frame_has_gt(vtubes, i)]
 
         self.distort_param = {
             'brightness_prob': 0.5,

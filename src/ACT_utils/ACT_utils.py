@@ -5,6 +5,32 @@ import numpy as np
 # Assisting function for finding a good/bad tubelet
 
 
+def frame_in_tube(tube, i):
+    # True if all frames from i to (i + K - 1) are inside tube
+    # it's sufficient to just check the first and last frame.
+    # return (i in tube[: ,0] and i + K - 1 in tube[:, 0])
+    return i in tube[:, 0]
+
+
+def frame_out_tube(tube, i):
+    # True if all frames between i and (i + K - 1) are outside of tube
+    return not (i in tube[:, 0])
+
+
+def frame_in_out_tubes(tube_list, i):
+    # Given a list of tubes: tube_list, return True if
+    # all frames from i to (i + K - 1) are either inside (tubelet_in_tube)
+    # or outside (tubelet_out_tube) the tubes.
+    return True
+
+
+def frame_has_gt(tube_list, i):
+    # Given a list of tubes: tube_list, return True if
+    # the tubelet starting spanning from [i to (i + K - 1)]
+    # is inside (tubelet_in_tube) at least a tube in tube_list.
+    return any([frame_in_tube(tube, i) for tube in tube_list])
+
+
 def tubelet_in_tube(tube, i, K):
     # True if all frames from i to (i + K - 1) are inside tube
     # it's sufficient to just check the first and last frame.

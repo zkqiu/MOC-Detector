@@ -64,7 +64,7 @@ class PrefetchDataset(torch.utils.data.Dataset):
             images = self.pre_process_func(images)
 
         if self.opt.flow_model != '':
-            flows = [cv2.imread(self.flowfile(v, min(frame + i, self.nframes[v]))).astype(np.float32) for i in range(self.opt.K + self.opt.ninput - 1)]
+            flows = [cv2.imread(self.flowfile(v, max(1, min(frame + i - (self.opt.K + self.opt.ninput - 1)//2, self.nframes[v])))).astype(np.float32) for i in range(self.opt.K + self.opt.ninput - 1)]
             flows = self.pre_process_func(flows, is_flow=True, ninput=self.opt.ninput)
 
         outfile = self.outfile(v, frame)

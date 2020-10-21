@@ -22,9 +22,9 @@ class Sampler(data.Dataset):
         output_w = input_w // self.opt.down_ratio
         # read images
         if self._ninput > 1:
-            images = [cv2.imread(self.flowfile(v, min(frame + i, self._nframes[v]))).astype(np.float32) for i in range(K + self._ninput - 1)]
+            images = [cv2.imread(self.flowfile(v, max(1, min(frame + i - (K + self._ninput - 1)//2, self._nframes[v])))).astype(np.float32) for i in range(K + self._ninput - 1)]
         else:
-            images = [cv2.imread(self.imagefile(v, frame + i)).astype(np.float32) for i in range(K)]
+            images = [cv2.imread(self.imagefile(v, max(1, min(frame + i - K//2, self._nframes[v])))).astype(np.float32) for i in range(K)]
         data = [np.empty((3 * self._ninput, self._resize_height, self._resize_width), dtype=np.float32) for i in range(K)]
 
         if self.mode == 'train':
@@ -41,7 +41,7 @@ class Sampler(data.Dataset):
                 for t in tubes:
                     if frame not in t[:, 0]:
                         continue
-                    assert frame + K - 1 in t[:, 0]
+                    # assert frame + K - 1 in t[:, 0]
                     # copy otherwise it will change the gt of the dataset also
                     t = t.copy()
                     if do_mirror:
@@ -49,9 +49,9 @@ class Sampler(data.Dataset):
                         xmin = w - t[:, 3]
                         t[:, 3] = w - t[:, 1]
                         t[:, 1] = xmin
-                    boxes = t[(t[:, 0] >= frame) * (t[:, 0] < frame + K), 1:5]
+                    boxes = t[t[:, 0] == frame, 1:5]
 
-                    assert boxes.shape[0] == K
+                    # assert boxes.shape[0] == K
                     if ilabel not in gt_bbox:
                         gt_bbox[ilabel] = []
                     # gt_bbox[ilabel] ---> a list of numpy array, each one is K, x1, x2, y1, y2
@@ -68,10 +68,10 @@ class Sampler(data.Dataset):
                 for t in tubes:
                     if frame not in t[:, 0]:
                         continue
-                    assert frame + K - 1 in t[:, 0]
+                    # assert frame + K - 1 in t[:, 0]
                     t = t.copy()
-                    boxes = t[(t[:, 0] >= frame) * (t[:, 0] < frame + K), 1:5]
-                    assert boxes.shape[0] == K
+                    boxes = t[t[:, 0] == frame, 1:5]
+                    # assert boxes.shape[0] == K
                     if ilabel not in gt_bbox:
                         gt_bbox[ilabel] = []
                     gt_bbox[ilabel].append(boxes)
@@ -104,7 +104,7 @@ class Sampler(data.Dataset):
         num_objs = 0
         for ilabel in gt_bbox:
             for itube in range(len(gt_bbox[ilabel])):
-                key = K // 2
+                key = 0
                 # key frame's bbox height and width （both on the feature map）
                 key_h, key_w = gt_bbox[ilabel][itube][key, 3] - gt_bbox[ilabel][itube][key, 1], gt_bbox[ilabel][itube][key, 2] - gt_bbox[ilabel][itube][key, 0]
                 # create gaussian heatmap
