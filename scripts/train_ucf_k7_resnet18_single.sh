@@ -9,10 +9,11 @@ GPU=0,1,2,3
 
 
 # -------------------- Evaluation --------------------
+PATH_TO_RGB_MODEL='K7_rgb_imagenet_resnet18_single/model_[10]_2020-10-21-16-09.pth'
 PATH_TO_FLOW_MODEL='K7_flow_imagenet_resnet18_single/model_[10]_2020-10-23-06-04.pth'
-INFERENCE_DIR='../experiment/result_model/K7_flow_imagenet_resnet18_single/inference'
+INFERENCE_DIR='../experiment/result_model/K7_flow_imagenet_resnet18_single/rgb_flow_inference'
 
-CUDA_VISIBLE_DEVICES=$GPU python3 det.py --task normal --K 7 --gpus $GPU --batch_size 48 --master_batch 8 --num_workers 8 --flow_model ../experiment/result_model/$PATH_TO_FLOW_MODEL --inference_dir $INFERENCE_DIR --flip_test --arch resnet_18 --ninput 5
+CUDA_VISIBLE_DEVICES=$GPU python3 det.py --task normal --K 7 --gpus $GPU --batch_size 32 --master_batch 8 --num_workers 8 --rgb_model ../experiment/result_model/$PATH_TO_RGB_MODEL --flow_model ../experiment/result_model/$PATH_TO_FLOW_MODEL --inference_dir $INFERENCE_DIR --flip_test --arch resnet_18 --ninput 5
 # CUDA_VISIBLE_DEVICES=0 python3 det.py --task normal --K 7 --gpus 0 --batch_size 1 --master_batch 1 --num_workers 0 --rgb_model ../experiment/result_model/$PATH_TO_RGB_MODEL --inference_dir $INFERENCE_DIR --flip_test --arch resnet_18
 #
 python3 ACT.py --task frameAP --K 1 --th 0.5 --inference_dir $INFERENCE_DIR
